@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จองห้องพักแมว</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; }
+        header { background-color: #333; color: white; padding: 1rem; text-align: center; }
+        nav a { color: white; margin: 0 1rem; text-decoration: none; }
+        section { padding: 2rem; }
+        .room-card { border: 1px solid #ccc; padding: 1rem; margin-bottom: 1rem; text-align: center; }
+        .room-card img { max-width: 100%; height: auto; margin-bottom: 1rem; }
+        
+        .calendar-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            border: 1px solid #ccc;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .calendar-header button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            gap: 5px;
+        }
+        .day-name {
+            font-weight: bold;
+            color: #555;
+        }
+        .day {
+            padding: 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .day.today {
+            background-color: #e0e0e0;
+        }
+        .day:hover {
+            background-color: #f0f0f0;
+        }
+        .day.selected {
+            background-color: #ff6347;
+            color: white;
+        }
+        .day.in-range {
+            background-color: #ffb6c1;
+        }
+
+        #room-selection,
+        #room-grid-display,
+        #contact-page {
+            display: none;
+        }
+        .room-floor {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .room-box {
+            width: 150px;
+            padding: 1rem;
+            border: 2px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .room-box.available {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+        .room-box.booked {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            cursor: not-allowed;
+        }
+
+        .social-link-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .social-link-container a {
+            text-decoration: none;
+        }
+        .social-link-container img {
+            width: 70px;
+            height: 70px;
+            transition: transform 0.3s;
+        }
+        .social-link-container img:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>โรงแรมแมว "MeowStay"</h1>
+        <nav>
+            <a href="#" onclick="showBookingPage()">จองห้องพัก</a>
+            <a href="#" onclick="showContactPage()">ติดต่อเรา</a>
+        </nav>
+    </header>
+    <main>
+        <section id="booking-section">
+            <h2>จองห้องพัก</h2>
+            <div class="calendar-container">
+                <div id="calendar"></div>
+            </div>
+            <form id="booking-form">
+                <label for="check-in">วันที่เช็คอิน:</label>
+                <input type="text" id="check-in-display" readonly>
+                
+                <label for="check-out">วันที่เช็คเอาท์:</label>
+                <input type="text" id="check-out-display" readonly>
+                
+                <button type="submit">ยืนยันการจอง</button>
+            </form>
+        </section>
+
+        <section id="room-selection">
+            <h2>เลือกห้องพัก</h2>
+            <div class="room-card">
+                <h3>ห้อง Standard</h3>
+                <img src="http://googleusercontent.com/image_collection/image_retrieval/720145629439075981_0" alt="ห้องพัก Standard">
+                <p>ห้องพักขนาดกระทัดรัดสำหรับแมวหนึ่งตัว พร้อมของเล่นและมุมพักผ่อนส่วนตัว</p>
+                <p>ราคา: 200 บาท/คืน</p>
+                <button onclick="showRoomGrid('Standard')">เลือกห้องนี้</button>
+            </div>
+            <div class="room-card">
+                <h3>ห้อง VIP</h3>
+                <img src="http://googleusercontent.com/image_collection/image_retrieval/5666157655834601110_0" alt="ห้องพัก VIP">
+                <p>ห้องพักขนาดใหญ่ขึ้นพร้อมวิวสวน มี Cat Tree และโซฟาสำหรับพักผ่อน</p>
+                <p>ราคา: 350 บาท/คืน</p>
+                <button onclick="showRoomGrid('VIP')">เลือกห้องนี้</button>
+            </div>
+            <div class="room-card">
+                <h3>ห้อง VVIP</h3>
+                <img src="http://googleusercontent.com/image_collection/image_retrieval/16848548878241932541_0" alt="ห้องพัก VVIP">
+                <p>ห้องพักระดับพรีเมียมขนาดใหญ่ที่สุด พร้อมห้องน้ำส่วนตัวและของเล่นมากมาย</p>
+                <p>ราคา: 500 บาท/คืน</p>
+                <button onclick="showRoomGrid('VVIP')">เลือกห้องนี้</button>
+            </div>
+        </section>
+
+        <section id="room-grid-display">
+            <h2>เลือกหมายเลขห้องพัก</h2>
+            <p>ห้องว่าง <span style="color: green;">■</span> | ห้องไม่ว่าง <span style="color: red;">■</span></p>
+            <div class="room-floor">
+                <div class="room-box" data-room-id="1">ห้อง 1</div>
+                <div class="room-box" data-room-id="2">ห้อง 2</div>
+                <div class="room-box" data-room-id="3">ห้อง 3</div>
+            </div>
+            <div class="room-floor">
+                <div class="room-box" data-room-id="4">ห้อง 4</div>
+                <div class="room-box" data-room-id="5">ห้อง 5</div>
+                <div class="room-box" data-room-id="6">ห้อง 6</div>
+            </div>
+        </section>
+
+        <section id="contact-page">
+            <h2>ติดต่อเรา</h2>
+            <p>สอบถามข้อมูลหรือจองห้องพักเพิ่มเติมได้ตามช่องทางด้านล่างนี้เลยครับ</p>
+            <div class="social-link-container">
+                <a href="https://www.facebook.com/fon.phakawadee?locale=th_TH" target="_blank">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" alt="Facebook Icon">
+                </a>
+                <a href="https://line.me/ti/p/FHr5Cqu9PC" target="_blank">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/LINE_logo.svg/2048px-LINE_logo.svg.png" alt="LINE Icon">
+                </a>
+                <a href="https://www.instagram.com/pkwd_fon?igsh=MTc0ZmV2dHBibWtlYg==" target="_blank">
+                    <img src="https://cdn2.iconfinder.com/data/icons/2018-social-media-app-logos/1000/2018_social_media_popular_app_logo_instagram-512.png" alt="Instagram Icon">
+                </a>
+            </div>
+            <button onclick="showBookingPage()">ย้อนกลับ</button>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 MeowStay. All rights reserved.</p>
+    </footer>
+    <script>
+        const calendarEl = document.getElementById('calendar');
+        const checkInDisplay = document.getElementById('check-in-display');
+        const checkOutDisplay = document.getElementById('check-out-display');
+        const bookingSection = document.getElementById('booking-section');
+        const roomSelectionSection = document.getElementById('room-selection');
+        const roomGridDisplay = document.getElementById('room-grid-display');
+        const contactPage = document.getElementById('contact-page');
+        const roomBoxes = document.querySelectorAll('.room-box');
+
+        let checkInDate = null;
+        let checkOutDate = null;
+        let selectedRoomType = '';
+
+        let bookedRooms = {
+            '1': { status: 'available', bookingEnd: null },
+            '2': { status: 'booked', bookingEnd: new Date('2025-08-25') },
+            '3': { status: 'available', bookingEnd: null },
+            '4': { status: 'booked', bookingEnd: new Date('2025-08-22') },
+            '5': { status: 'available', bookingEnd: null },
+            '6': { status: 'available', bookingEnd: null }
+        };
+
+        function renderCalendar(month, year) {
+            const today = new Date();
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const totalDays = lastDay.getDate();
+
+            const calendarHeader = `
+                <div class="calendar-header">
+                    <button onclick="changeMonth(-1)">&#9664;</button>
+                    <h3>${firstDay.toLocaleString('th-TH', { month: 'long', year: 'numeric' })}</h3>
+                    <button onclick="changeMonth(1)">&#9654;</button>
+                </div>
+                <div class="calendar-grid">
+                    <div class="day-name">อา</div>
+                    <div class="day-name">จ</div>
+                    <div class="day-name">อ</div>
+                    <div class="day-name">พ</div>
+                    <div class="day-name">พฤ</div>
+                    <div class="day-name">ศ</div>
+                    <div class="day-name">ส</div>
+                </div>
+            `;
+
+            let daysHtml = '';
+            for (let i = 0; i < firstDay.getDay(); i++) {
+                daysHtml += '<div></div>';
+            }
+
+            for (let day = 1; day <= totalDays; day++) {
+                const date = new Date(year, month, day);
+                const isToday = today.toDateString() === date.toDateString();
+                daysHtml += `<div class="day ${isToday ? 'today' : ''}" data-date="${date.toISOString()}">${day}</div>`;
+            }
+
+            calendarEl.innerHTML = calendarHeader + `<div class="calendar-grid">${daysHtml}</div>`;
+        }
+
+        function changeMonth(direction) {
+            const currentDate = new Date(currentMonth, currentYear);
+            currentDate.setMonth(currentDate.getMonth() + direction);
+            currentMonth = currentDate.getMonth();
+            currentYear = currentDate.getFullYear();
+            renderCalendar(currentMonth, currentYear);
+        }
+
+        calendarEl.addEventListener('click', (event) => {
+            if (event.target.classList.contains('day')) {
+                const selectedDate = new Date(event.target.dataset.date);
+                
+                if (!checkInDate || checkOutDate) {
+                    checkInDate = selectedDate;
+                    checkOutDate = null;
+                } else {
+                    checkOutDate = selectedDate;
+                }
+
+                updateDisplay();
+                highlightDates();
+            }
+        });
+
+        function updateDisplay() {
+            checkInDisplay.value = checkInDate ? checkInDate.toLocaleDateString('th-TH') : '';
+            checkOutDisplay.value = checkOutDate ? checkOutDate.toLocaleDateString('th-TH') : '';
+        }
+
+        function highlightDates() {
+            document.querySelectorAll('.day').forEach(day => day.classList.remove('selected', 'in-range'));
+            if (checkInDate) {
+                document.querySelector(`.day[data-date="${checkInDate.toISOString()}"]`).classList.add('selected');
+            }
+            if (checkInDate && checkOutDate) {
+                const allDays = document.querySelectorAll('.day');
+                let startHighlight = false;
+                allDays.forEach(day => {
+                    const date = new Date(day.dataset.date);
+                    if (date.toDateString() === checkInDate.toDateString()) {
+                        startHighlight = true;
+                    }
+                    if (startHighlight && date.toDateString() !== checkInDate.toDateString() && date.toDateString() !== checkOutDate.toDateString()) {
+                        day.classList.add('in-range');
+                    }
+                    if (date.toDateString() === checkOutDate.toDateString()) {
+                        startHighlight = false;
+                        day.classList.add('selected');
+                    }
+                });
+            }
+        }
+
+        const now = new Date();
+        let currentMonth = now.getMonth();
+        let currentYear = now.getFullYear();
+        renderCalendar(currentMonth, currentYear);
+
+        document.getElementById('booking-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            if (!checkInDate || !checkOutDate) {
+                alert('กรุณาเลือกวันที่เช็คอินและเช็คเอาท์ให้ครบถ้วน');
+                return;
+            }
+
+            bookingSection.style.display = 'none';
+            roomSelectionSection.style.display = 'block';
+            contactPage.style.display = 'none';
+        });
+
+        function showRoomGrid(roomType) {
+            selectedRoomType = roomType;
+            roomSelectionSection.style.display = 'none';
+            roomGridDisplay.style.display = 'block';
+            contactPage.style.display = 'none';
+            updateRoomStatus();
+        }
+
+        function updateRoomStatus() {
+            const today = new Date();
+            roomBoxes.forEach(box => {
+                const roomId = box.dataset.roomId;
+                const roomData = bookedRooms[roomId];
+                
+                if (roomData.status === 'booked' && roomData.bookingEnd > today) {
+                    box.classList.remove('available');
+                    box.classList.add('booked');
+                } else {
+                    box.classList.remove('booked');
+                    box.classList.add('available');
+                }
+            });
+        }
+
+        roomBoxes.forEach(box => {
+            box.addEventListener('click', () => {
+                if (box.classList.contains('available')) {
+                    const roomId = box.dataset.roomId;
+                    const confirmBooking = confirm(`คุณต้องการจองห้องที่ ${roomId} (${selectedRoomType}) ใช่หรือไม่?`);
+                    if (confirmBooking) {
+                        bookedRooms[roomId].status = 'booked';
+                        bookedRooms[roomId].bookingEnd = checkOutDate;
+                        alert(`การจองห้องที่ ${roomId} สำเร็จแล้ว!`);
+                        updateRoomStatus();
+                    }
+                } else {
+                    alert('ขออภัย ห้องนี้ไม่ว่างในช่วงเวลาที่คุณเลือก');
+                }
+            });
+        });
+
+        function showContactPage() {
+            bookingSection.style.display = 'none';
+            roomSelectionSection.style.display = 'none';
+            roomGridDisplay.style.display = 'none';
+            contactPage.style.display = 'block';
+        }
+
+        function showBookingPage() {
+            bookingSection.style.display = 'block';
+            roomSelectionSection.style.display = 'none';
+            roomGridDisplay.style.display = 'none';
+            contactPage.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
