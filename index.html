@@ -63,7 +63,10 @@
 
         #room-selection,
         #room-grid-display,
-        #contact-page {
+        #contact-page,
+        #room-detail-page,
+        #payment-page,
+        #invoice-page {
             display: none;
         }
         .room-floor {
@@ -107,6 +110,29 @@
         .social-link-container img:hover {
             transform: scale(1.1);
         }
+
+        .room-images {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        .room-images img {
+            width: 30%;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        
+        #invoice-page {
+            border: 2px solid #333;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 2rem auto;
+            border-radius: 8px;
+        }
+        .invoice-details p {
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
@@ -138,21 +164,21 @@
             <h2>เลือกห้องพัก</h2>
             <div class="room-card">
                 <h3>ห้อง Standard</h3>
-                <img src="http://googleusercontent.com/image_collection/image_retrieval/720145629439075981_0" alt="ห้องพัก Standard">
+                <img src="images/image1.jpg" alt="ห้องพัก Standard">
                 <p>ห้องพักขนาดกระทัดรัดสำหรับแมวหนึ่งตัว พร้อมของเล่นและมุมพักผ่อนส่วนตัว</p>
                 <p>ราคา: 200 บาท/คืน</p>
                 <button onclick="showRoomGrid('Standard')">เลือกห้องนี้</button>
             </div>
             <div class="room-card">
                 <h3>ห้อง VIP</h3>
-                <img src="http://googleusercontent.com/image_collection/image_retrieval/5666157655834601110_0" alt="ห้องพัก VIP">
+                <img src="https://images.unsplash.com/photo-1579383674681-37976e191983?q=80&w=1770&auto=format&fit=crop" alt="ห้องพัก VIP">
                 <p>ห้องพักขนาดใหญ่ขึ้นพร้อมวิวสวน มี Cat Tree และโซฟาสำหรับพักผ่อน</p>
                 <p>ราคา: 350 บาท/คืน</p>
                 <button onclick="showRoomGrid('VIP')">เลือกห้องนี้</button>
             </div>
             <div class="room-card">
                 <h3>ห้อง VVIP</h3>
-                <img src="http://googleusercontent.com/image_collection/image_retrieval/16848548878241932541_0" alt="ห้องพัก VVIP">
+                <img src="https://images.unsplash.com/photo-1582234388432-d852504936d5?q=80&w=1770&auto=format&fit=crop" alt="ห้องพัก VVIP">
                 <p>ห้องพักระดับพรีเมียมขนาดใหญ่ที่สุด พร้อมห้องน้ำส่วนตัวและของเล่นมากมาย</p>
                 <p>ราคา: 500 บาท/คืน</p>
                 <button onclick="showRoomGrid('VVIP')">เลือกห้องนี้</button>
@@ -174,6 +200,42 @@
             </div>
         </section>
 
+        <section id="room-detail-page">
+            <h2 id="room-detail-title"></h2>
+            <div class="room-images">
+                <img id="image1" src="" alt="รูปห้องพัก 1">
+                <img id="image2" src="" alt="รูปห้องพัก 2">
+                <img id="image3" src="" alt="รูปห้องพัก 3">
+            </div>
+            <button onclick="showPaymentPage()">ชำระเงิน</button>
+            <button onclick="showRoomGrid()">ย้อนกลับ</button>
+        </section>
+
+        <section id="payment-page">
+            <h2>หน้าชำระเงิน</h2>
+            <p>กรุณาทำการชำระเงินภายใน 1 นาทีเพื่อจองห้อง</p>
+            <p>ระยะเวลาเข้าพัก: <span id="stay-duration">0</span> คืน</p>
+            <p>ยอดที่ต้องชำระ: <span id="payment-amount">0</span> บาท</p>
+            <p id="payment-timer"></p>
+            <p>สแกน QR Code เพื่อชำระเงิน: <a href="https://promptpay.io/0819141011/500" target="_blank">คลิกที่นี่</a></p>
+            <button onclick="confirmPayment()">ยืนยันการชำระ</button>
+            <button onclick="goBackToRoomSelection()">ย้อนกลับ</button>
+        </section>
+        
+        <section id="invoice-page">
+            <h2>ใบเสร็จรับเงิน</h2>
+            <div class="invoice-details">
+                <p><b>หมายเลขการจอง:</b> <span id="invoice-id"></span></p>
+                <p><b>ห้องที่จอง:</b> <span id="invoice-room"></span></p>
+                <p><b>วันที่เข้าพัก:</b> <span id="invoice-checkin"></span></p>
+                <p><b>วันที่เช็คเอาท์:</b> <span id="invoice-checkout"></span></p>
+                <p><b>จำนวนคืน:</b> <span id="invoice-nights"></span></p>
+                <p><b>ยอดชำระ:</b> <span id="invoice-total"></span> บาท</p>
+                <p>ขอบคุณที่ใช้บริการของเรา!</p>
+            </div>
+            <button onclick="showBookingPage()">กลับหน้าหลัก</button>
+        </section>
+
         <section id="contact-page">
             <h2>ติดต่อเรา</h2>
             <p>สอบถามข้อมูลหรือจองห้องพักเพิ่มเติมได้ตามช่องทางด้านล่างนี้เลยครับ</p>
@@ -190,6 +252,7 @@
             </div>
             <button onclick="showBookingPage()">ย้อนกลับ</button>
         </section>
+
     </main>
     <footer>
         <p>&copy; 2024 MeowStay. All rights reserved.</p>
@@ -202,19 +265,50 @@
         const roomSelectionSection = document.getElementById('room-selection');
         const roomGridDisplay = document.getElementById('room-grid-display');
         const contactPage = document.getElementById('contact-page');
+        const roomDetailPage = document.getElementById('room-detail-page');
+        const paymentPage = document.getElementById('payment-page');
+        const invoicePage = document.getElementById('invoice-page');
         const roomBoxes = document.querySelectorAll('.room-box');
 
         let checkInDate = null;
         let checkOutDate = null;
         let selectedRoomType = '';
+        let selectedRoomId = '';
+        let paymentTimeout;
+        let paymentInterval;
+        let totalNights = 0;
+        let roomPrices = {
+            'Standard': 200,
+            'VIP': 350,
+            'VVIP': 500
+        };
 
+        // ข้อมูลการจองจำลอง (ในระบบจริงจะดึงจากฐานข้อมูล)
         let bookedRooms = {
             '1': { status: 'available', bookingEnd: null },
-            '2': { status: 'booked', bookingEnd: new Date('2025-08-25') },
+            '2': { status: 'available', bookingEnd: null },
             '3': { status: 'available', bookingEnd: null },
-            '4': { status: 'booked', bookingEnd: new Date('2025-08-22') },
+            '4': { status: 'available', bookingEnd: null },
             '5': { status: 'available', bookingEnd: null },
             '6': { status: 'available', bookingEnd: null }
+        };
+
+        const roomImages = {
+            'Standard': [
+                "images/image1.jpg",
+                "images/image2.jpg",
+                "images/image3.jpg"
+            ],
+            'VIP': [
+                "https://images.unsplash.com/photo-1579383674681-37976e191983?q=80&w=1770&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1579383674681-37976e191983?q=80&w=1770&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1579383674681-37976e191983?q=80&w=1770&auto=format&fit=crop"
+            ],
+            'VVIP': [
+                "https://images.unsplash.com/photo-1582234388432-d852504936d5?q=80&w=1770&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1582234388432-d852504936d5?q=80&w=1770&auto=format&fit=crop",
+                "https://images.unsplash.com/photo-1582234388432-d852504936d5?q=80&w=1770&auto=format&fit=crop"
+            ]
         };
 
         function renderCalendar(month, year) {
@@ -270,6 +364,11 @@
                     checkInDate = selectedDate;
                     checkOutDate = null;
                 } else {
+                    if (selectedDate < checkInDate) {
+                        alert('วันที่เช็คเอาท์ต้องไม่ก่อนวันที่เช็คอิน');
+                        checkOutDate = null;
+                        return;
+                    }
                     checkOutDate = selectedDate;
                 }
 
@@ -320,17 +419,28 @@
                 return;
             }
 
+            const diffTime = Math.abs(checkOutDate - checkInDate);
+            totalNights = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            if (totalNights === 0) {
+                 totalNights = 1;
+            }
+
             bookingSection.style.display = 'none';
             roomSelectionSection.style.display = 'block';
             contactPage.style.display = 'none';
+            roomDetailPage.style.display = 'none';
+            paymentPage.style.display = 'none';
+            invoicePage.style.display = 'none';
         });
 
         function showRoomGrid(roomType) {
-            selectedRoomType = roomType;
+            if (roomType) {
+                selectedRoomType = roomType;
+            }
             roomSelectionSection.style.display = 'none';
             roomGridDisplay.style.display = 'block';
-            contactPage.style.display = 'none';
             updateRoomStatus();
+            paymentPage.style.display = 'none'; // Ensure payment page is hidden
         }
 
         function updateRoomStatus() {
@@ -351,25 +461,124 @@
 
         roomBoxes.forEach(box => {
             box.addEventListener('click', () => {
+                const roomId = box.dataset.roomId;
                 if (box.classList.contains('available')) {
-                    const roomId = box.dataset.roomId;
-                    const confirmBooking = confirm(`คุณต้องการจองห้องที่ ${roomId} (${selectedRoomType}) ใช่หรือไม่?`);
-                    if (confirmBooking) {
-                        bookedRooms[roomId].status = 'booked';
-                        bookedRooms[roomId].bookingEnd = checkOutDate;
-                        alert(`การจองห้องที่ ${roomId} สำเร็จแล้ว!`);
-                        updateRoomStatus();
-                    }
+                    selectedRoomId = roomId;
+                    showRoomDetails(selectedRoomType, selectedRoomId);
                 } else {
                     alert('ขออภัย ห้องนี้ไม่ว่างในช่วงเวลาที่คุณเลือก');
                 }
             });
         });
 
+        function showRoomDetails(roomType, roomId) {
+            roomGridDisplay.style.display = 'none';
+            roomDetailPage.style.display = 'block';
+            
+            document.getElementById('room-detail-title').innerText = `รายละเอียดห้อง ${roomId} (${roomType})`;
+            
+            const images = roomImages[roomType];
+            document.getElementById('image1').src = images[0];
+            document.getElementById('image2').src = images[1];
+            document.getElementById('image3').src = images[2];
+        }
+
+        function showPaymentPage() {
+            roomDetailPage.style.display = 'none';
+            paymentPage.style.display = 'block';
+            
+            // ตั้งค่าห้องให้เป็นสถานะ booked ชั่วคราว
+            bookedRooms[selectedRoomId].status = 'booked';
+            updateRoomStatus();
+
+            document.getElementById('stay-duration').innerText = totalNights;
+            const totalPrice = totalNights * roomPrices[selectedRoomType];
+            document.getElementById('payment-amount').innerText = totalPrice;
+            document.querySelector('#payment-page a').href = `https://promptpay.io/0819141011/${totalPrice}`;
+
+            let timeLeft = 60;
+            const timerElement = document.getElementById('payment-timer');
+            timerElement.innerText = `เวลาที่เหลือ: ${timeLeft} วินาที`;
+
+            // Clear any existing timers to prevent multiple timers running
+            if (paymentInterval) {
+                clearInterval(paymentInterval);
+            }
+            if (paymentTimeout) {
+                clearTimeout(paymentTimeout);
+            }
+
+            paymentTimeout = setTimeout(() => {
+                // หากเวลาหมดแล้วและยังไม่ได้ชำระเงิน
+                if (bookedRooms[selectedRoomId].status === 'booked') {
+                    bookedRooms[selectedRoomId].status = 'available';
+                    bookedRooms[selectedRoomId].bookingEnd = null;
+                    updateRoomStatus();
+                    alert('หมดเวลาการจองชั่วคราว ห้องถูกปล่อยคืนแล้ว');
+                    showBookingPage();
+                }
+            }, 60000); // 1 นาที
+
+            paymentInterval = setInterval(() => {
+                timeLeft--;
+                timerElement.innerText = `เวลาที่เหลือ: ${timeLeft} วินาที`;
+                if (timeLeft <= 0) {
+                    clearInterval(paymentInterval);
+                }
+            }, 1000);
+        }
+
+        function goBackToRoomSelection() {
+            // ยกเลิกการนับเวลาและคืนสถานะห้อง
+            if (paymentInterval) {
+                clearInterval(paymentInterval);
+            }
+            if (paymentTimeout) {
+                clearTimeout(paymentTimeout);
+            }
+            if (selectedRoomId) {
+                bookedRooms[selectedRoomId].status = 'available';
+            }
+
+            // ซ่อนหน้าชำระเงินและแสดงหน้าเลือกห้อง
+            paymentPage.style.display = 'none';
+            showRoomGrid();
+        }
+
+        function confirmPayment() {
+            clearTimeout(paymentTimeout); // ยกเลิกการจับเวลา 1 นาที
+            clearInterval(paymentInterval); // หยุดการนับเวลา
+
+            bookedRooms[selectedRoomId].status = 'booked';
+            bookedRooms[selectedRoomId].bookingEnd = checkOutDate;
+            updateRoomStatus();
+
+            // แสดงหน้าใบเสร็จ
+            showInvoicePage();
+        }
+
+        function showInvoicePage() {
+            paymentPage.style.display = 'none';
+            invoicePage.style.display = 'block';
+            
+            document.getElementById('invoice-id').innerText = `INV-${Math.floor(Math.random() * 10000)}`;
+            document.getElementById('invoice-room').innerText = `ห้อง ${selectedRoomId} (${selectedRoomType})`;
+            document.getElementById('invoice-checkin').innerText = checkInDate.toLocaleDateString('th-TH');
+            document.getElementById('invoice-checkout').innerText = checkOutDate.toLocaleDateString('th-TH');
+            document.getElementById('invoice-nights').innerText = totalNights;
+            const totalPrice = totalNights * roomPrices[selectedRoomType];
+            document.getElementById('invoice-total').innerText = totalPrice;
+
+            alert('ทำการชำระเงินเรียบร้อยแล้ว! การจองของคุณได้รับการยืนยันแล้ว');
+        }
+
         function showContactPage() {
             bookingSection.style.display = 'none';
             roomSelectionSection.style.display = 'none';
             roomGridDisplay.style.display = 'none';
+            roomDetailPage.style.display = 'none';
+            paymentPage.style.display = 'none';
+            invoicePage.style.display = 'none';
             contactPage.style.display = 'block';
         }
 
@@ -378,7 +587,16 @@
             roomSelectionSection.style.display = 'none';
             roomGridDisplay.style.display = 'none';
             contactPage.style.display = 'none';
+            roomDetailPage.style.display = 'none';
+            paymentPage.style.display = 'none';
+            invoicePage.style.display = 'none';
         }
+        
+        // Initial setup to make sure all rooms are available
+        for (let roomId in bookedRooms) {
+            bookedRooms[roomId].status = 'available';
+        }
+        
     </script>
 </body>
 </html>
